@@ -1,0 +1,21 @@
+<%- include("templates/header") %>
+    <% if (authenticated) { %>
+        <h1>Welcome back, <%= name %>!</h1>
+        <p>You are signed in.</p>
+        <form action="/members" method="get">
+            <button type="submit">Go to Members Area</button>
+        </form>
+        <form action="/logout" method="get">
+            <button type="submit">Logout</button>
+        </form>
+        <% } else { %>
+            <h1>Welcome</h1>
+            <p>Create an account or log in to continue.</p>
+            <form action="/signup" method="get">
+                <button type="submit">Sign up</button>
+            </form>
+            <form action="/login" method="get">
+                <button type="submit">Log in</button>
+            </form>
+            <% } %>
+                <%- include("templates/footer") %>
