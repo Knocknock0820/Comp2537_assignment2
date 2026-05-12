@@ -1,10 +1,15 @@
 <%- include("templates/header") %>
     <h1>Hello, <%= name %>!</h1>
-    <p>
-        <%= imageLabel %>
-    </p>
-    <img src="<%= image %>" alt="<%= imageLabel %>" style="width:250px;">
+
+    <h1 class="text-center py-5">Spyder 918</h1>
+    <div class="row mb-3 text-center">
+        <div class="col-md-4 themed-grid-col py-1"><img class="img-fluid" src="drift.gif" /></div>
+        <div class="col-md-4 themed-grid-col py-1"><img class="img-fluid" src="engine.gif" /></div>
+        <div class="col-md-4 themed-grid-col py-1"><img class="img-fluid" src="smooth.gif" /></div>
+    </div>
+
     <form action="/logout" method="get">
-        <button type="submit">Sign out</button>
+        <button type="submit" class="btn btn-outline-secondary rounded-pill">Sign out</button>
     </form>
+
     <%- include("templates/footer") %>

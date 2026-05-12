@@ -66,12 +66,61 @@ app.use(
   }),
 );
 
+const navLinks = [
+  { name: "Home", url: "/" },
+  { name: "Cats", url: "/cats" },
+  { name: "Login", url: "/login" },
+  { name: "404", url: "/dne" },
+];
+
+app.use((req, res, next) => {
+  const pathFolders = req.path.split("/").slice(1);
+  const folder = "/" + pathFolders[0];
+  app.locals.folder = folder;
+  app.locals.navLinks = navLinks;
+  next();
+});
+function isValidSession(req) {
+  if (req.session.authenticated) {
+    return true;
+  }
+  return false;
+}
+
+function sessionValidation(req, res, next) {
+  if (isValidSession(req)) {
+    next();
+  } else {
+    res.redirect("/login");
+  }
+}
+
+function isAdmin(req) {
+  if (req.session.user_type == "admin") {
+    return true;
+  }
+  return false;
+}
+
+function adminAuthorization(req, res, next) {
+  if (!isAdmin(req)) {
+    res.status(403);
+    res.render("admin", { error: "Not authorized" });
+    return;
+  } else {
+    next();
+  }
+}
 // Routes
 app.get("/", (req, res) => {
   res.render("index", {
     authenticated: req.session.authenticated,
     name: req.session.name,
   });
+});
+
+app.get("/cats", (req, res) => {
+  res.render("cats");
 });
 
 app.get("/signup", (req, res) => {
@@ -115,11 +164,13 @@ app.post("/submitUser", async (req, res) => {
     name: name,
     email: email,
     password: hashedPassword,
+    user_type: "user",
   });
   console.log("Inserted user");
 
   req.session.authenticated = true;
   req.session.name = name;
+  req.session.user_type = "user";
   req.session.cookie.maxAge = expireTime;
 
   res.redirect("/members");
@@ -148,7 +199,7 @@ app.post("/loggingin", async (req, res) => {
 
   const result = await userCollection
     .find({ email: email })
-    .project({ name: 1, email: 1, password: 1, _id: 1 })
+    .project({ name: 1, email: 1, password: 1, user_type: 1, _id: 1 })
     .toArray();
 
   console.log(result);
@@ -162,6 +213,7 @@ app.post("/loggingin", async (req, res) => {
     console.log("correct password");
     req.session.authenticated = true;
     req.session.name = result[0].name;
+    req.session.user_type = result[0].user_type;
     req.session.cookie.maxAge = expireTime;
 
     res.redirect("/members");
@@ -182,21 +234,8 @@ app.get("/members", (req, res) => {
     res.redirect("/");
     return;
   } else {
-    var random = Math.floor(Math.random() * 3) + 1;
-    var image = "";
-
-    if (random == 1) {
-      image = "/drift.gif";
-    } else if (random == 2) {
-      image = "/engine.gif";
-    } else {
-      image = "/smooth.gif";
-    }
-
     res.render("members", {
       name: req.session.name,
-      image,
-      imageLabel: random == 1 ? "Drift" : random == 2 ? "Engine" : "Smooth",
     });
   }
 });
@@ -205,6 +244,55 @@ app.get("/logout", (req, res) => {
   req.session.destroy();
   res.redirect("/");
 });
+
+app.get("/admin", sessionValidation, adminAuthorization, async (req, res) => {
+  const result = await userCollection
+    .find()
+    .project({ name: 1, email: 1, user_type: 1, _id: 1 })
+    .toArray();
+
+  res.render("admin", { users: result });
+});
+
+app.post(
+  "/admin/promote",
+  sessionValidation,
+  adminAuthorization,
+  async (req, res) => {
+    const email = req.body.email;
+
+    await userCollection.updateOne(
+      { email: email },
+      {
+        $set: {
+          user_type: "admin",
+        },
+      },
+    );
+
+    res.redirect("/admin");
+  },
+);
+
+app.post(
+  "/admin/demote",
+  sessionValidation,
+  adminAuthorization,
+  async (req, res) => {
+    const email = req.body.email;
+
+    await userCollection.updateOne(
+      { email: email },
+      {
+        $set: {
+          user_type: "user",
+        },
+      },
+    );
+
+    res.redirect("/admin");
+  },
+);
 
 app.use(express.static(__dirname + "/public"));
 
