@@ -12,10 +12,10 @@
             </ul>
         </div>
         <% } %>
-            <form action="/submitUser" method="post">
-                <input name="name" type="text" placeholder="name">
-                <input name="email" type="text" placeholder="user@domain.com">
-                <input name="password" type="password" placeholder="password">
+            <form action="/submitUser" method="post" class="d-grid gap-3 col-12 col-md-6 col-lg-4">
+                <input name="name" type="text" placeholder="name" class="form-control rounded-pill">
+                <input name="email" type="text" placeholder="user@domain.com" class="form-control rounded-pill">
+                <input name="password" type="password" placeholder="password" class="form-control rounded-pill">
                 <button type="submit" class="btn btn-primary rounded-pill">Submit</button>
             </form>
             <p><a href="/login">Already have an account? Log in</a></p>

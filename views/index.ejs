@@ -2,19 +2,19 @@
     <% if (authenticated) { %>
         <h1>Welcome back, <%= name %>!</h1>
         <p>You are signed in.</p>
-        <form action="/members" method="get">
+        <form action="/members" method="get" class="d-inline-block me-2 mb-2">
             <button type="submit" class="btn btn-primary rounded-pill">Go to Members Area</button>
         </form>
-        <form action="/logout" method="get">
+        <form action="/logout" method="get" class="d-inline-block mb-2">
             <button type="submit" class="btn btn-outline-secondary rounded-pill">Logout</button>
         </form>
         <% } else { %>
             <h1>Welcome</h1>
             <p>Create an account or log in to continue.</p>
-            <form action="/signup" method="get" style="padding:5px 14px;">
+            <form action="/signup" method="get" class="d-inline-block me-2 mb-2">
                 <button type="submit" class="btn btn-primary rounded-pill">Sign up</button>
             </form>
-            <form action="/login" method="get" style="padding:5px 14px;">
+            <form action="/login" method="get" class="d-inline-block mb-2">
                 <button type="submit" class="btn btn-outline-primary rounded-pill">Log in</button>
             </form>
             <% } %>
