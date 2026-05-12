@@ -1,0 +1,21 @@
+<tr>
+    <td style="padding:10px 14px;">
+        <%= user.name %>
+    </td>
+    <td style="padding:10px 14px;">
+        <%= user.email %>
+    </td>
+    <td style="padding:10px 14px;">
+        <%= user.user_type %>
+    </td>
+    <td style="padding:10px 14px;">
+        <form action="/admin/promote" method="post" class="d-inline-block me-2">
+            <input type="hidden" name="email" value="<%= user.email %>">
+            <button type="submit" class="btn btn-success rounded-pill">Promote</button>
+        </form>
+        <form action="/admin/demote" method="post" class="d-inline-block">
+            <input type="hidden" name="email" value="<%= user.email %>">
+            <button type="submit" class="btn btn-danger rounded-pill">Demote</button>
+        </form>
+    </td>
+</tr>
